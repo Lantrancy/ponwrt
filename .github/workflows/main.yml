@@ -1,7 +1,7 @@
 name: Build PonWrt for Nokia XG-040G-MF
 
 on:
-  workflow_dispatch: # 允许在页面上随时手动点击运行
+  workflow_dispatch:
 
 jobs:
   build:
@@ -27,10 +27,6 @@ jobs:
           echo "CONFIG_TARGET_airoha_an7583=y" >> .config
           echo "CONFIG_TARGET_airoha_an7583_DEVICE_nokia_xg-040g-mf-ubi=y" >> .config
           make defconfig
-
-      - name: Download Dependencies
-        run: |
-          make download -j8
 
       - name: Compile Firmware
         run: |
