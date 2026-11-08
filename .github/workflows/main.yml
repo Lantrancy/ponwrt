@@ -24,14 +24,23 @@ jobs:
 
       - name: Generate .config for Nokia MF
         run: |
-          # 1. 使用作者官方脚本合并 an7583 完整底包与 release 优化配置
+          # 1. 使用官方脚本合并 an7583 完整底包与 release 优化配置
           ./scripts/kconfig.pl + configs/an7583.config configs/release.config > .config
 
           # 2. 锁定目标机型为 Nokia XG-040G-MF (UBI版)
           echo "CONFIG_TARGET_airoha_an7583_DEVICE_nokia_xg-040g-mf-ubi=y" >> .config
 
-          # 3. 追加定制组件 (Argon 主题、ttyd 网页终端、测速与排错工具、USB 自动挂载、统计监控)
+          # 3. 强制将 Nokia XG-040G-MF 专属硬件驱动打包进固件 (修复 2.5G 网卡与光电前端识别)
           cat << 'EOF' >> .config
+          CONFIG_PACKAGE_kmod-phy-airoha-en8811h=y
+          CONFIG_PACKAGE_airoha-en8811h-firmware=y
+          CONFIG_PACKAGE_kmod-airoha-en7572=y
+          CONFIG_PACKAGE_kmod-airoha-xpon=y
+          CONFIG_PACKAGE_kmod-regulator-userspace-consumer=y
+          CONFIG_PACKAGE_kmod-usb3=y
+          CONFIG_PACKAGE_kmod-usb-ledtrig-usbport=y
+
+          # === 定制功能组件 (Argon主题、ttyd网页终端、测速排错、USB自动挂载、统计监控) ===
           CONFIG_PACKAGE_luci-theme-argon=y
           CONFIG_PACKAGE_luci-app-argon-config=y
           CONFIG_PACKAGE_luci-i18n-argon-config-zh-cn=y
